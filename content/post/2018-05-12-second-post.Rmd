@@ -38,7 +38,7 @@ head(salles_bloc)
 ```
 
 
-```{r tableau, warning=FALSE, message=FALSE}
+```{r tableau, warning=FALSE, message=FALSE, echo=FALSE}
 library(dplyr)
 library(knitr)
 ct <-salles_bloc %>% 
