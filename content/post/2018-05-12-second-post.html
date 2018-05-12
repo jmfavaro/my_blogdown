@@ -20,28 +20,7 @@ tags: []
 <li>la date d’ouverture</li>
 </ul>
 <p>Plusieurs méthodes sont possibles : scrapping des storelocators (<em>via</em> la package <code>rvest</code> par exemple) des enseignes, de sites spécialisés comme , mais le plus rapide et certainement le plus efficace est de faire appel à Google Places<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> que l’on va interroger <em>via</em> le package <a href="https://cran.r-project.org/web/packages/googleway/index.html"><code>googleway</code></a>.</p>
-<pre><code>                        place_id                           nom
-   1 ChIJ-_iT_je7rhIRoU3AjYIhO54       Antoine Gaston Climbing
-   2 ChIJZxXi8QijrhIRKkVxURCVSEo           SOLO Escalade Union
-   3 ChIJ7UWxf8m9rhIRiAZiKyoLmBw Altissimo Toulouse Montaudran
-   4 ChIJ97w4cje7rhIRXROK-w889F0        SOLO Escalade Toulouse
-   5 ChIJIZdUUNKkrhIRfnZnYrdNAFw            Block&#39;Out Toulouse
-   6 ChIJddWvqhjGrhIRRdnf09yADBk                    My fitness
-                                                adresse      lat      lng
-   1   53 Chemin Henri Bessemer, 31200 Toulouse, France 43.61934 1.423936
-   2       51 Route de Bessières, 31240 L&#39;Union, France 43.66393 1.470407
-   3          5 Rue Jean Rodier, 31400 Toulouse, France 43.56650 1.487456
-   4 131 Chemin du Sang de Serp, 31200 Toulouse, France 43.62003 1.420514
-   5         2 Rue de l&#39;Egalite, 31200 Toulouse, France 43.63114 1.412285
-   6              18 Rue du Béarn, 31600 Eaunes, France 43.41771 1.371069
-                                                              types     ville
-   1                         school point_of_interest establishment RABASTENS
-   2                                point_of_interest establishment RABASTENS
-   3                                point_of_interest establishment RABASTENS
-   4                                point_of_interest establishment RABASTENS
-   5 spa gym health restaurant food point_of_interest establishment RABASTENS
-   6                     gym health point_of_interest establishment    EAUNES</code></pre>
-<table>
+<table class="table table-striped table-bordered" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <caption>
 <span id="tab:tableau">Table 1: </span>A table of the first 10 rows of the POI.
 </caption>
