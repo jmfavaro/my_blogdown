@@ -2,7 +2,7 @@ baseurl = "https://jmfavaro2.netlify.com/"
 title = "Ghostwriter example"
 theme = "ghostwriter"
 languageCode = "en-us"
-copyright = "My Name"
+copyright = "Jean-Marc Favaro"
 disqusShortname = "XXX"
 googleAnalytics = "XXX"
 
@@ -15,7 +15,7 @@ googleAnalytics = "XXX"
 
 [Params]
     intro = true
-    headline = "Ghostwriter example"
+    headline = "Le blog de JM"
     description = "Ghostwriter example description"
     github = "https://github.com/XXX"
     gitlab = "https://gitlab.com/XXX"
