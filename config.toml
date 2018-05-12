@@ -7,7 +7,7 @@ disqusShortname = "XXX"
 googleAnalytics = "XXX"
 
 [Author]
-    name = "My Name"
+    name = "Jean-Marc Favaro"
     profile = "https://google.com/+XXX"
 
 [Taxonomies]
@@ -26,8 +26,8 @@ googleAnalytics = "XXX"
     email = "jmfavaro@yahoo.fr"
     opengraph = true
     shareTwitter = true
-    shareFacebook = true
-    shareGooglePlus = true
+    shareFacebook = false
+    shareGooglePlus = false
     shareLinkedIn = false
     dateFormat = "Mon, Jan 2, 2006"
     highlightJsUrl = ""
@@ -43,16 +43,11 @@ googleAnalytics = "XXX"
     weight = 1
 
 [[menu.main]]
-    name = "Projects"
-    url = "/project/"
-    weight = 2
-
-[[menu.main]]
     name = "Contact"
     url = "/page/contact/"
-    weight = 3
+    weight = 2
 
 [[menu.main]]
     name = "About"
     url = "/page/about/"
-    weight = 4
+    weight = 3
