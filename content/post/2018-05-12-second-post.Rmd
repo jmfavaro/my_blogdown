@@ -6,10 +6,32 @@ date: 2018-05-12T15:29:28+02:00
 tags: []
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, comment="  ")
+```
+
+
 Pour mon premier post, j'ai choisi un thème qui me tient à coeur : **l'escalade**.
 Je pratique ce sport depuis 15 ans environ, et, depuis quelques années, une chose m'a frappé : on trouve de plus en plus de salles d'escalade de blocs, et cela partout en France. Pour le géographe que je suis, cela ne fait pas de toute, nous assistons là à une ce que l'on nomme une **diffusion spatiale d'innovation** dans un système urbain.
 
 Pendant très longtemps, sur Paris, la seule salle d'escalade de blocs, c'était [Antrebloc](http://www.antrebloc.com/) à Villejuif. Au nord, on avait [MurMur](https://www.murmur.fr/) (mais qui ne faisait pas vraiment de bloc, juste un pan), et c'était tout ou presque en ce qui concerne les salles privées. Ce n'est pas que le bloc était une activité confidentielle, simplement, tout du moins en région parisienne, elle était pratiquée en milieu naturel (Fontainebleau).
+
+# Constitution de la base de données des salles de blocs en France
+
+L'objectif est de consituer une base avec, pour chaque salle :
+
+* le nom
+* l'adresse
+* la longitude/latitude
+* la date d'ouverture  
+
+Plusieurs méthodes sont possibles : scrapping des storelocators (*via* la package `rvest` par exemple) des enseignes, de sites spécialisés comme , mais le plus rapide et certainement le plus efficace est de faire appel à Google Places[^1] que l'on va interroger *via* le package [`googleway`](https://cran.r-project.org/web/packages/googleway/index.html).
+
+[^1]: Il y a peu de POI et la plupart des enseignes ont bien renseigné l'information sur Google.
+
+```{r,eval=FALSE}
+library(googleway)
+```
 
 
 

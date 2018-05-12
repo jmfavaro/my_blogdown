@@ -10,3 +10,21 @@ tags: []
 
 <p>Pour mon premier post, j’ai choisi un thème qui me tient à coeur : <strong>l’escalade</strong>. Je pratique ce sport depuis 15 ans environ, et, depuis quelques années, une chose m’a frappé : on trouve de plus en plus de salles d’escalade de blocs, et cela partout en France. Pour le géographe que je suis, cela ne fait pas de toute, nous assistons là à une ce que l’on nomme une <strong>diffusion spatiale d’innovation</strong> dans un système urbain.</p>
 <p>Pendant très longtemps, sur Paris, la seule salle d’escalade de blocs, c’était <a href="http://www.antrebloc.com/">Antrebloc</a> à Villejuif. Au nord, on avait <a href="https://www.murmur.fr/">MurMur</a> (mais qui ne faisait pas vraiment de bloc, juste un pan), et c’était tout ou presque en ce qui concerne les salles privées. Ce n’est pas que le bloc était une activité confidentielle, simplement, tout du moins en région parisienne, elle était pratiquée en milieu naturel (Fontainebleau).</p>
+<div id="constitution-de-la-base-de-donnees-des-salles-de-blocs-en-france" class="section level1">
+<h1>Constitution de la base de données des salles de blocs en France</h1>
+<p>L’objectif est de consituer une base avec, pour chaque salle :</p>
+<ul>
+<li>le nom</li>
+<li>l’adresse</li>
+<li>la longitude/latitude</li>
+<li>la date d’ouverture</li>
+</ul>
+<p>Plusieurs méthodes sont possibles : scrapping des storelocators (<em>via</em> la package <code>rvest</code> par exemple) des enseignes, de sites spécialisés comme , mais le plus rapide et certainement le plus efficace est de faire appel à Google Places<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> que l’on va interroger <em>via</em> le package <a href="https://cran.r-project.org/web/packages/googleway/index.html"><code>googleway</code></a>.</p>
+<pre class="r"><code>library(googleway)</code></pre>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Il y a peu de POI et la plupart des enseignes ont bien renseigné l’information sur Google.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
