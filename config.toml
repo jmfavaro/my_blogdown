@@ -16,7 +16,7 @@ googleAnalytics = "XXX"
 [Params]
     intro = true
     headline = "Le blog de JM"
-    description = "Ghostwriter example description"
+    description = "De la géographie avec des (gros) morceaux de statistiques dedans..."
     github = "https://github.com/jmfavaro"
     linkedin = "https://fr.linkedin.com/in/favaro-jean-marc-0748149"
     twitter = "https://twitter.com/jm_favaro"
