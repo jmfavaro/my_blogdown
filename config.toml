@@ -3,7 +3,7 @@ title = "Jean-Marc's Blog"
 theme = "ghostwriter"
 languageCode = "en-us"
 copyright = "Jean-Marc Favaro"
-disqusShortname = "XXX"
+disqusShortname = "jmfavaro"
 googleAnalytics = "XXX"
 
 [Author]
@@ -18,7 +18,6 @@ googleAnalytics = "XXX"
     headline = "Le blog de JM"
     description = "Ghostwriter example description"
     github = "https://github.com/XXX"
-    gitlab = "https://gitlab.com/XXX"
     linkedin = "https://fr.linkedin.com/in/favaro-jean-marc-0748149"
     gplus = "https://google.com/+XXX"
     twitter = "https://twitter.com/jm_favaro"
@@ -28,7 +27,7 @@ googleAnalytics = "XXX"
     shareTwitter = true
     shareFacebook = false
     shareGooglePlus = false
-    shareLinkedIn = false
+    shareLinkedIn = true
     dateFormat = "Mon, Jan 2, 2006"
     highlightJsUrl = ""
     highlightJsLocalUrl = ""
