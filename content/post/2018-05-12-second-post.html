@@ -20,7 +20,327 @@ tags: []
 <li>la date d’ouverture</li>
 </ul>
 <p>Plusieurs méthodes sont possibles : scrapping des storelocators (<em>via</em> la package <code>rvest</code> par exemple) des enseignes, de sites spécialisés comme , mais le plus rapide et certainement le plus efficace est de faire appel à Google Places<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> que l’on va interroger <em>via</em> le package <a href="https://cran.r-project.org/web/packages/googleway/index.html"><code>googleway</code></a>.</p>
-<pre class="r"><code>library(googleway)</code></pre>
+<pre><code>                        place_id                           nom
+   1 ChIJ-_iT_je7rhIRoU3AjYIhO54       Antoine Gaston Climbing
+   2 ChIJZxXi8QijrhIRKkVxURCVSEo           SOLO Escalade Union
+   3 ChIJ7UWxf8m9rhIRiAZiKyoLmBw Altissimo Toulouse Montaudran
+   4 ChIJ97w4cje7rhIRXROK-w889F0        SOLO Escalade Toulouse
+   5 ChIJIZdUUNKkrhIRfnZnYrdNAFw            Block&#39;Out Toulouse
+   6 ChIJddWvqhjGrhIRRdnf09yADBk                    My fitness
+                                                adresse      lat      lng
+   1   53 Chemin Henri Bessemer, 31200 Toulouse, France 43.61934 1.423936
+   2       51 Route de Bessières, 31240 L&#39;Union, France 43.66393 1.470407
+   3          5 Rue Jean Rodier, 31400 Toulouse, France 43.56650 1.487456
+   4 131 Chemin du Sang de Serp, 31200 Toulouse, France 43.62003 1.420514
+   5         2 Rue de l&#39;Egalite, 31200 Toulouse, France 43.63114 1.412285
+   6              18 Rue du Béarn, 31600 Eaunes, France 43.41771 1.371069
+                                                              types     ville
+   1                         school point_of_interest establishment RABASTENS
+   2                                point_of_interest establishment RABASTENS
+   3                                point_of_interest establishment RABASTENS
+   4                                point_of_interest establishment RABASTENS
+   5 spa gym health restaurant food point_of_interest establishment RABASTENS
+   6                     gym health point_of_interest establishment    EAUNES</code></pre>
+<pre class="r"><code>library(dplyr)
+library(knitr)
+ct &lt;-salles_bloc %&gt;% 
+  head(10) 
+ct %&gt;% 
+  kable(&quot;html&quot;, caption = &#39;A table of the first 10 rows of the POI.&#39;)</code></pre>
+<table>
+<caption>
+<span id="tab:tableau">Table 1: </span>A table of the first 10 rows of the POI.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+place_id
+</th>
+<th style="text-align:left;">
+nom
+</th>
+<th style="text-align:left;">
+adresse
+</th>
+<th style="text-align:right;">
+lat
+</th>
+<th style="text-align:right;">
+lng
+</th>
+<th style="text-align:left;">
+types
+</th>
+<th style="text-align:left;">
+ville
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+ChIJ-_iT_je7rhIRoU3AjYIhO54
+</td>
+<td style="text-align:left;">
+Antoine Gaston Climbing
+</td>
+<td style="text-align:left;">
+53 Chemin Henri Bessemer, 31200 Toulouse, France
+</td>
+<td style="text-align:right;">
+43.61934
+</td>
+<td style="text-align:right;">
+1.423936
+</td>
+<td style="text-align:left;">
+school point_of_interest establishment
+</td>
+<td style="text-align:left;">
+RABASTENS
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+ChIJZxXi8QijrhIRKkVxURCVSEo
+</td>
+<td style="text-align:left;">
+SOLO Escalade Union
+</td>
+<td style="text-align:left;">
+51 Route de Bessières, 31240 L’Union, France
+</td>
+<td style="text-align:right;">
+43.66393
+</td>
+<td style="text-align:right;">
+1.470407
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+RABASTENS
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+ChIJ7UWxf8m9rhIRiAZiKyoLmBw
+</td>
+<td style="text-align:left;">
+Altissimo Toulouse Montaudran
+</td>
+<td style="text-align:left;">
+5 Rue Jean Rodier, 31400 Toulouse, France
+</td>
+<td style="text-align:right;">
+43.56650
+</td>
+<td style="text-align:right;">
+1.487456
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+RABASTENS
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+ChIJ97w4cje7rhIRXROK-w889F0
+</td>
+<td style="text-align:left;">
+SOLO Escalade Toulouse
+</td>
+<td style="text-align:left;">
+131 Chemin du Sang de Serp, 31200 Toulouse, France
+</td>
+<td style="text-align:right;">
+43.62003
+</td>
+<td style="text-align:right;">
+1.420514
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+RABASTENS
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+ChIJIZdUUNKkrhIRfnZnYrdNAFw
+</td>
+<td style="text-align:left;">
+Block’Out Toulouse
+</td>
+<td style="text-align:left;">
+2 Rue de l’Egalite, 31200 Toulouse, France
+</td>
+<td style="text-align:right;">
+43.63114
+</td>
+<td style="text-align:right;">
+1.412285
+</td>
+<td style="text-align:left;">
+spa gym health restaurant food point_of_interest establishment
+</td>
+<td style="text-align:left;">
+RABASTENS
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+ChIJddWvqhjGrhIRRdnf09yADBk
+</td>
+<td style="text-align:left;">
+My fitness
+</td>
+<td style="text-align:left;">
+18 Rue du Béarn, 31600 Eaunes, France
+</td>
+<td style="text-align:right;">
+43.41771
+</td>
+<td style="text-align:right;">
+1.371069
+</td>
+<td style="text-align:left;">
+gym health point_of_interest establishment
+</td>
+<td style="text-align:left;">
+EAUNES
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+ChIJuRDyv3W5rhIRi4VIOyyUfYo
+</td>
+<td style="text-align:left;">
+Là Ô escalade
+</td>
+<td style="text-align:left;">
+Centre Secondo, 8 Chemin des Genêts, 31120 Portet-sur-Garonne, France
+</td>
+<td style="text-align:right;">
+43.53552
+</td>
+<td style="text-align:right;">
+1.405813
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+EAUNES
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+ChIJQXE56HawrhIRPHX0nFfW7P4
+</td>
+<td style="text-align:left;">
+Altissimo Toulouse Saint Martin
+</td>
+<td style="text-align:left;">
+ZAC Saint-Martin du Touch, 9 Rue Marie Louise Dissard, 31300 Toulouse, France
+</td>
+<td style="text-align:right;">
+43.60209
+</td>
+<td style="text-align:right;">
+1.367042
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+EAUNES
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+ChIJk_e420IllUcRSOv_Wxaz5_s
+</td>
+<td style="text-align:left;">
+DOCK39 SUPERGREEN
+</td>
+<td style="text-align:left;">
+1 Avenue du 14 Juillet 1789, 57180 Terville, France
+</td>
+<td style="text-align:right;">
+49.34726
+</td>
+<td style="text-align:right;">
+6.126988
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+TERVILLE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+ChIJc_5cmsYplUcR00mySbsED1E
+</td>
+<td style="text-align:left;">
+Cliff Montois (CAF Moselle)
+</td>
+<td style="text-align:left;">
+Route de Moyeuvre, 57860 Montois-la-Montagne, France
+</td>
+<td style="text-align:right;">
+49.22429
+</td>
+<td style="text-align:right;">
+6.023260
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+TERVILLE
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="footnotes">
 <hr />

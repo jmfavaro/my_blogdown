@@ -29,8 +29,22 @@ Plusieurs méthodes sont possibles : scrapping des storelocators (*via* la packa
 
 [^1]: Il y a peu de POI et la plupart des enseignes ont bien renseigné l'information sur Google.
 
-```{r,eval=FALSE}
+```{r,eval=TRUE, echo=FALSE}
 library(googleway)
+
+salles_bloc <- readRDS("../../static/data/result_dedup.RDS")
+head(salles_bloc)
+
+```
+
+
+```{r tableau, warning=FALSE, message=FALSE}
+library(dplyr)
+library(knitr)
+ct <-salles_bloc %>% 
+  head(10) 
+ct %>% 
+  kable("html", caption = 'A table of the first 10 rows of the POI.')
 ```
 
 

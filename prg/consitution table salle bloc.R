@@ -1,4 +1,5 @@
 library(googleway)
+library(RPostgreSQL)
 
 ##============================================================================================
 ## parametres
@@ -6,36 +7,33 @@ library(googleway)
 
 APIkey <- "AIzaSyCImmKPiGDg7Wq-VjEV9IUKp620YnzqeDg"
 #con <- dbConnect(PostgreSQL(), user= "postgres", password="postgres", dbname="am",  port=5436)
-con <- dbConnect(PostgreSQL(), user= "postgres", password="postgres", dbname="am",  port=5434)
+con <- dbConnect(PostgreSQL(), user= "postgres", password="postgres", dbname="am", host = "localhost",  port=5432)
 
-#------ BEGIN(les fonctions)
-# appel 1ere fois
-search_cc <- function(index) {
-  temp <- google_places(location = c(mbc[index,]$y_centre_mbc,mbc[index,]$x_centre_mbc),
-                        place_type = "shopping_mall",
-                        #keyword = "centre%20commercial",
-                        radius = c(mbc[index,"r_google"]),
-                        key = APIkey)
-  return(temp)
+lst_ville <- dbGetQuery(con,"select insee_com, nom_com from geo.geofla_commune_2015 where population > 5000;")
+
+result <- data.frame(place_id = NULL, nom = NULL, adresse = NULL,
+                     rating = NULL, lat = NULL, lng = NULL, tags = NULL, ville = NULL,
+                     stringsAsFactors = F)
+
+for (i in lst_ville$nom_com) {
+  tryCatch({
+    gp <- google_places(key = APIkey,search_string = paste0("rock climbing ", i))
+    temp <- data.frame(place_id = gp$results$place_id,
+                       nom = gp$results$name,
+                       adresse = gp$results$formatted_address,
+                       lat = gp$results$geometry$location$lat,
+                       lng = gp$results$geometry$location$lng,
+                       types = sapply(gp$results$types,paste0,collapse = " "),
+                       ville = i,
+                       stringsAsFactors = F)
+    result <- rbind(result, temp)
+    }, error = function(e) {print(paste0(i," KO"))}, finally = print(i))
 }
 
-temp <- google_places(key = APIkey,
-                      location = c(-2.349014, 48.864716),
-                      place_type = "shopping_mall",
-                      radius = 2000,
-                      keyword = "carrefour"
- )
+result.dedup <- result[!duplicated(result$place_id),]
 
-temp <- google_places(key = APIkey,search_string = "rock climbing bordeaux"
-)
-  temp$results$formatted_address
-  temp$results$place_id
+head(result.dedup)
 
-temp2 <- google_place_details(place_id = temp$results$place_id,simplify = TRUE, key = APIkey)
+saveRDS(result.dedup,"./static/data/result_dedup.RDS")
 
-temp <- google_places(location = c(mbc[index,]$y_centre_mbc,mbc[index,]$x_centre_mbc),
-                      place_type = "shopping_mall",
-                      #keyword = "centre%20commercial",
-                      radius = c(mbc[index,"r_google"]),
-                      key = APIkey)
 
