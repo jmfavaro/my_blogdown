@@ -3,13 +3,20 @@ title: "Diffusion spatio-temporelle des salles d'escalade de bloc en France"
 description: ""
 author: "JMF"
 date: 2018-05-12T15:29:28+02:00
-tags: []
+tags: ["R"]
+coversize: full
+output: 
+  blogdown::html_page:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, comment="  ")
 options(knitr.table.format = "html") 
 ```
+
+
+
 
 
 Pour mon premier post, j'ai choisi un thème qui me tient à coeur : **l'escalade**.
@@ -26,11 +33,48 @@ L'objectif est de consituer une base avec, pour chaque salle :
 * la longitude/latitude
 * la date d'ouverture  
 
+## Extraction des données brutes (Google Places)
+
 Plusieurs méthodes sont possibles : scrapping des storelocators (*via* la package `rvest` par exemple) des enseignes, de sites spécialisés comme , mais le plus rapide et certainement le plus efficace est de faire appel à Google Places[^1] que l'on va interroger *via* le package [`googleway`](https://cran.r-project.org/web/packages/googleway/index.html).
 
 [^1]: Il y a peu de POI et la plupart des enseignes ont bien renseigné l'information sur Google.
 
+```{r, eval=FALSE}
+library(RPostgreSQL)
+library(googleway)
 
+# liste des communes de plus de 5000 hab
+con <- dbConnect(PostgreSQL(), user= "postgres", password="postgres", dbname="am", host = "localhost",  port=5432)
+lst_ville <- dbGetQuery(con,"select insee_com, nom_com from geo.geofla_commune_2015 where population > 5000;")
+
+# définition de la df de résultat
+result <- data.frame(place_id = NULL, nom = NULL, adresse = NULL,
+                     rating = NULL, lat = NULL, lng = NULL, tags = NULL, ville = NULL,
+                     stringsAsFactors = F)
+
+# 1 requete google / ville et append des résultats dans la df
+for (i in lst_ville$nom_com) {
+  tryCatch({
+    gp <- google_places(key = APIkey,search_string = paste0("rock climbing ", i))
+    temp <- data.frame(place_id = gp$results$place_id,
+                       nom = gp$results$name,
+                       adresse = gp$results$formatted_address,
+                       lat = gp$results$geometry$location$lat,
+                       lng = gp$results$geometry$location$lng,
+                       types = sapply(gp$results$types,paste0,collapse = " "),
+                       ville = i,
+                       stringsAsFactors = F)
+    result <- rbind(result, temp)
+    }, error = function(e) {print(paste0(i," KO"))})
+}
+# deduplication sur le place_id (id unique)
+result_dedup <- result[!duplicated(result$place_id),]
+```
+
+
+Google a une forte tendance à renvoyer des résultats qui dépassent souvent largement le périmètre que l'on cherche (des faux positifs en quelque sorte). D'autant que dans notre cas, il n'y a pas de [**type**](https://developers.google.com/places/web-service/supported_types)  correspondant aux salles d'escalade permettant de restreindre les résultats à cette catégorie.
+
+Résultat, parmi les  places obtenues, on trouve bien nos salles d'escalade de blocs (Arkose, Block'Out,...) mais aussi des sites naturels de grimpe, des clubs, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!
 
 ```{r tableau, warning=FALSE, message=FALSE, echo=FALSE}
 library(dplyr)

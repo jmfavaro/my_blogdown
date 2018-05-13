@@ -30,7 +30,7 @@ for (i in lst_ville$nom_com) {
     }, error = function(e) {print(paste0(i," KO"))}, finally = print(i))
 }
 
-result.dedup <- result[!duplicated(result$place_id),]
+result_dedup <- result[!duplicated(result$place_id),]
 
 head(result.dedup)
 
