@@ -64,9 +64,16 @@ for (i in lst_ville$nom_com) {
 result_dedup &lt;- result[!duplicated(result$place_id),]</code></pre>
 <p>Google a une forte tendance à renvoyer des résultats qui dépassent souvent largement le périmètre que l’on cherche (des faux positifs en quelque sorte). D’autant que dans notre cas, il n’y a pas de <a href="https://developers.google.com/places/web-service/supported_types"><strong>type</strong></a> correspondant aux salles d’escalade permettant de restreindre les résultats à cette catégorie.</p>
 <p>Résultat, parmi les places obtenues, on trouve bien nos salles d’escalade de blocs (Arkose, Block’Out,…) mais aussi des sites naturels de grimpe, des clubs, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!</p>
+<pre class="r"><code>library(dplyr)
+library(kableExtra)
+
+result_dedup %&gt;% 
+  sample_n(., size = 10, replace = TRUE) %&gt;%
+  kable(caption = &#39;echantillon de 20 places&#39;) %&gt;%
+  kable_styling(bootstrap_options = &quot;striped&quot;, font_size = 9)</code></pre>
 <table class="table table-striped" style="font-size: 9px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
-<span id="tab:tableau">Table 1: </span>A table of the first 10 rows of the POI.
+<span id="tab:tableau1">Table 1: </span>echantillon de 20 places
 </caption>
 <thead>
 <tr>
@@ -98,266 +105,290 @@ ville
 <tbody>
 <tr>
 <td style="text-align:left;">
-1
+1169
 </td>
 <td style="text-align:left;">
-ChIJ-_iT_je7rhIRoU3AjYIhO54
+ChIJu2j0DlejikcRQoymKSpXuZM
 </td>
 <td style="text-align:left;">
-Antoine Gaston Climbing
+Combe Laval
 </td>
 <td style="text-align:left;">
-53 Chemin Henri Bessemer, 31200 Toulouse, France
+26190 Saint-Laurent-en-Royans, France
 </td>
 <td style="text-align:right;">
-43.61934
+45.01706
 </td>
 <td style="text-align:right;">
-1.423936
-</td>
-<td style="text-align:left;">
-school point_of_interest establishment
-</td>
-<td style="text-align:left;">
-RABASTENS
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-ChIJZxXi8QijrhIRKkVxURCVSEo
-</td>
-<td style="text-align:left;">
-SOLO Escalade Union
-</td>
-<td style="text-align:left;">
-51 Route de Bessières, 31240 L’Union, France
-</td>
-<td style="text-align:right;">
-43.66393
-</td>
-<td style="text-align:right;">
-1.470407
+5.339522
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-RABASTENS
+TAIN-L’HERMITAGE
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-3
+3022
 </td>
 <td style="text-align:left;">
-ChIJ7UWxf8m9rhIRiAZiKyoLmBw
+ChIJ39uUWNMWrRIRKFJ-SSmmkqw
 </td>
 <td style="text-align:left;">
-Altissimo Toulouse Montaudran
+Tourist Office of the Pays de Figeac
 </td>
 <td style="text-align:left;">
-5 Rue Jean Rodier, 31400 Toulouse, France
+Hôtel de La Monnaie, Place Vival, 46100 Figeac, France
 </td>
 <td style="text-align:right;">
-43.56650
+44.60785
 </td>
 <td style="text-align:right;">
-1.487456
+2.032492
+</td>
+<td style="text-align:left;">
+travel_agency store point_of_interest establishment
+</td>
+<td style="text-align:left;">
+FIGEAC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7949
+</td>
+<td style="text-align:left;">
+ChIJl968RBwvw0cRUhpzWzfni1U
+</td>
+<td style="text-align:left;">
+Mairie
+</td>
+<td style="text-align:left;">
+Rue du Christ, 59960 Neuville-en-Ferrain, France
+</td>
+<td style="text-align:right;">
+50.74748
+</td>
+<td style="text-align:right;">
+3.164429
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-RABASTENS
+NEUVILLE-EN-FERRAIN
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-4
+5877
 </td>
 <td style="text-align:left;">
-ChIJ97w4cje7rhIRXROK-w889F0
+ChIJS5ZCKCo55kcRRM2Y4kC4ZbQ
 </td>
 <td style="text-align:left;">
-SOLO Escalade Toulouse
+Survilliers - Fosses
 </td>
 <td style="text-align:left;">
-131 Chemin du Sang de Serp, 31200 Toulouse, France
+95470 Fosses, France
 </td>
 <td style="text-align:right;">
-43.62003
+49.09958
 </td>
 <td style="text-align:right;">
-1.420514
+2.525629
 </td>
 <td style="text-align:left;">
-point_of_interest establishment
+train_station transit_station point_of_interest establishment
 </td>
 <td style="text-align:left;">
-RABASTENS
+FOSSES
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-5
+547
 </td>
 <td style="text-align:left;">
-ChIJIZdUUNKkrhIRfnZnYrdNAFw
+ChIJWx27kxof4UcRquUbvDOQE14
 </td>
 <td style="text-align:left;">
-Block’Out Toulouse
+hippodrome saint aubin lès elbeuf
 </td>
 <td style="text-align:left;">
-2 Rue de l’Egalite, 31200 Toulouse, France
+72 Avenue Pasteur, 76410 Saint-Aubin-lès-Elbeuf, France
 </td>
 <td style="text-align:right;">
-43.63114
+49.30840
 </td>
 <td style="text-align:right;">
-1.412285
-</td>
-<td style="text-align:left;">
-spa gym health restaurant food point_of_interest establishment
-</td>
-<td style="text-align:left;">
-RABASTENS
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-6
-</td>
-<td style="text-align:left;">
-ChIJddWvqhjGrhIRRdnf09yADBk
-</td>
-<td style="text-align:left;">
-My fitness
-</td>
-<td style="text-align:left;">
-18 Rue du Béarn, 31600 Eaunes, France
-</td>
-<td style="text-align:right;">
-43.41771
-</td>
-<td style="text-align:right;">
-1.371069
+1.018935
 </td>
 <td style="text-align:left;">
 gym health point_of_interest establishment
 </td>
 <td style="text-align:left;">
-EAUNES
+SAINT-AUBIN-LES-ELBEUF
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-7
+191
 </td>
 <td style="text-align:left;">
-ChIJuRDyv3W5rhIRi4VIOyyUfYo
+ChIJ5YYaNyeXVA0RAyAuL04oNnU
 </td>
 <td style="text-align:left;">
-Là Ô escalade
+Le Teich Escalade
 </td>
 <td style="text-align:left;">
-Centre Secondo, 8 Chemin des Genêts, 31120 Portet-sur-Garonne, France
+Place Pierre Dubernet, 33470 Le Teich, France
 </td>
 <td style="text-align:right;">
-43.53552
+44.63453
 </td>
 <td style="text-align:right;">
-1.405813
+-1.021714
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-EAUNES
+ARCACHON
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-9
+8013
 </td>
 <td style="text-align:left;">
-ChIJQXE56HawrhIRPHX0nFfW7P4
+ChIJE4j_BWeUVA0RnR4L1lpYKFI
 </td>
 <td style="text-align:left;">
-Altissimo Toulouse Saint Martin
+L’Orange Bleue
 </td>
 <td style="text-align:left;">
-ZAC Saint-Martin du Touch, 9 Rue Marie Louise Dissard, 31300 Toulouse, France
+64 Impasse Nicolas Appert, 33380 Biganos, France
 </td>
 <td style="text-align:right;">
-43.60209
+44.63745
 </td>
 <td style="text-align:right;">
-1.367042
+-0.952713
+</td>
+<td style="text-align:left;">
+gym health point_of_interest establishment
+</td>
+<td style="text-align:left;">
+BIGANOS
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+197
+</td>
+<td style="text-align:left;">
+ChIJMazU3g_15kcRVZd-xmJB6No
+</td>
+<td style="text-align:left;">
+GRIMPO
+</td>
+<td style="text-align:left;">
+40 Rue des Patis, 95300 Pontoise, France
+</td>
+<td style="text-align:right;">
+49.05309
+</td>
+<td style="text-align:right;">
+2.080420
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-EAUNES
+CARRIERES-SOUS-POISSY
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-11
+2207
 </td>
 <td style="text-align:left;">
-ChIJk_e420IllUcRSOv_Wxaz5_s
+ChIJkQOG9Sdv5kcRTcbedxS19O0
 </td>
 <td style="text-align:left;">
-DOCK39 SUPERGREEN
+Fitness Park
 </td>
 <td style="text-align:left;">
-1 Avenue du 14 Juillet 1789, 57180 Terville, France
+Centre commercial Qwartz, 4 Boulevard Gallieni, 92390 Villeneuve-la-Garenne, France
 </td>
 <td style="text-align:right;">
-49.34726
+48.92542
 </td>
 <td style="text-align:right;">
-6.126988
+2.327303
 </td>
 <td style="text-align:left;">
-point_of_interest establishment
+gym health point_of_interest establishment
 </td>
 <td style="text-align:left;">
-TERVILLE
+VILLENEUVE-LA-GARENNE
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-12
+5131
 </td>
 <td style="text-align:left;">
-ChIJc_5cmsYplUcR00mySbsED1E
+ChIJn6IP1AxWkkcRL15cACKQXEU
 </td>
 <td style="text-align:left;">
-Cliff Montois (CAF Moselle)
+Mayor of Luxeuil-les-Bains
 </td>
 <td style="text-align:left;">
-Route de Moyeuvre, 57860 Montois-la-Montagne, France
+1 Place Saint-Pierre, 70300 Luxeuil-les-Bains, France
 </td>
 <td style="text-align:right;">
-49.22429
+47.81679
 </td>
 <td style="text-align:right;">
-6.023260
+6.380608
 </td>
 <td style="text-align:left;">
-point_of_interest establishment
+city_hall local_government_office point_of_interest establishment
 </td>
 <td style="text-align:left;">
-TERVILLE
+LUXEUIL-LES-BAINS
 </td>
 </tr>
 </tbody>
 </table>
+<p>On commence par filtrer sur les types</p>
+<pre class="r"><code>library(stringr)
+# on tockenize les types dans un df
+lst_type &lt;- tibble(type = unlist(str_split(paste(result_dedup$types,collapse=&quot; &quot;),&quot; &quot;))) %&gt;% 
+            group_by(type) %&gt;%
+            summarise(n = n())
+lst_type  
+   # A tibble: 67 x 2
+      type               n
+      &lt;chr&gt;          &lt;int&gt;
+    1 accounting         1
+    2 airport            1
+    3 amusement_park    17
+    4 art_gallery        2
+    5 bakery             1
+    6 bank               2
+    7 bar               45
+    8 beauty_salon       6
+    9 bicycle_store      1
+   10 bowling_alley      3
+   # ... with 57 more rows</code></pre>
+<p>On construit (à la main) la liste de tous les types qui clairement n’ont rien à voir de près ou de loin avec une salle d’escalade et on supprime de la liste des <em>places</em> tout celles qui contiennent au moins un de ces types.</p>
+<pre class="r"><code>
+result_dedup_type_ok &lt;- result_dedup[!str_detect(result_dedup$types, &quot;zoo|university|travel_agency|transit_station|train_station|supermarket|stadium|shoe_store|school|rv_park|real_estate_agency|premise|political|place_of_worship|physiotherapist|parking|park|night_club|natural_feature|museum|movie_theater|meal_takeaway|meal_delivery|lodging|locality|local_government_office|insurance_agency|hospital|home_goods_store|hair_care|grocery_or_supermarket|general_contractor|gas_station|furniture_store|funeral_home|florist|finance|electronics_store|doctor|clothing_store|city_hall|church|cemetery|casino|car_repair|car_rental|car_dealer|campground|bowling_alley|bicycle_store|beauty_salon|bank|bakery|art_gallery|amusement_park|airport|accounting&quot;),]</code></pre>
 </div>
 </div>
 <div class="footnotes">

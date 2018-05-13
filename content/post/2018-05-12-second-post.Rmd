@@ -12,7 +12,10 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, comment="  ")
-options(knitr.table.format = "html") 
+options(knitr.table.format = "html")
+
+result_dedup <- readRDS("../../static/data/result_dedup.RDS")
+
 ```
 
 
@@ -76,20 +79,35 @@ Google a une forte tendance à renvoyer des résultats qui dépassent souvent la
 
 Résultat, parmi les  places obtenues, on trouve bien nos salles d'escalade de blocs (Arkose, Block'Out,...) mais aussi des sites naturels de grimpe, des clubs, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!
 
-```{r tableau, warning=FALSE, message=FALSE, echo=FALSE}
+```{r tableau1, warning=FALSE, message=FALSE, echo=TRUE}
 library(dplyr)
-library(knitr)
 library(kableExtra)
 
-salles_bloc <- readRDS("../../static/data/result_dedup.RDS")
-
-ct <-salles_bloc %>% 
-  head(10) 
-ct %>% 
-  kable("html", caption = 'A table of the first 10 rows of the POI.') %>%
+result_dedup %>% 
+  sample_n(., size = 10, replace = TRUE) %>%
+  kable(caption = 'echantillon de 20 places') %>%
   kable_styling(bootstrap_options = "striped", font_size = 9)
+
 ```
 
+On commence par filtrer sur les types
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+library(stringr)
+# on tockenize les types dans un df
+lst_type <- tibble(type = unlist(str_split(paste(result_dedup$types,collapse=" ")," "))) %>% 
+            group_by(type) %>%
+            summarise(n = n())
+lst_type  
+```
+
+
+On construit (à la main) la liste de tous les types qui clairement n'ont rien à voir de près ou de loin avec une salle d'escalade et on supprime de la liste des *places* tout celles qui contiennent au moins un de ces types.
+
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+
+result_dedup_type_ok <- result_dedup[!str_detect(result_dedup$types, "zoo|university|travel_agency|transit_station|train_station|supermarket|stadium|shoe_store|school|rv_park|real_estate_agency|premise|political|place_of_worship|physiotherapist|parking|park|night_club|natural_feature|museum|movie_theater|meal_takeaway|meal_delivery|lodging|locality|local_government_office|insurance_agency|hospital|home_goods_store|hair_care|grocery_or_supermarket|general_contractor|gas_station|furniture_store|funeral_home|florist|finance|electronics_store|doctor|clothing_store|city_hall|church|cemetery|casino|car_repair|car_rental|car_dealer|campground|bowling_alley|bicycle_store|beauty_salon|bank|bakery|art_gallery|amusement_park|airport|accounting"),]
+
+```
 
 
 
