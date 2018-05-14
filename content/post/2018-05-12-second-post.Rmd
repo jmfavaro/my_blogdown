@@ -112,7 +112,7 @@ result_dedup_typeok <- result_dedup[!str_detect(result_dedup$types, "bicycle_sto
 
 ```
 
-Après ce premier filtre, il reste `r nrow(result_dedupok)`. Néanmoins, on trouve encore des POI qui ne correspondent pas à ce que l'on cherche: des clubs, associations.  
+Après ce premier filtre, il reste `r nrow(result_dedup_typeok)`. Néanmoins, on trouve encore des POI qui ne correspondent pas à ce que l'on cherche: des clubs, associations.  
 
 ```{r, warning=FALSE, message=FALSE, echo=TRUE}
 result_dedup_typeok_nomok <- result_dedup_typeok[!str_detect(tolower(result_dedup_typeok$nom), "auberge|asso|caf|ffme|amicale|amitié|athletic|aviron|club alpin francais|asptt|centre|club|complexe|canyoning|dojo|falaise|football|golf|grimpeur|groupe|gymnase|halle|orange bleue|muscles|mur d'escalade|Nautique|physic|plongee|restaurant|sportif|rafting|rocher|site d'escalade|tennis"),]
