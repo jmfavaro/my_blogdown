@@ -38,17 +38,17 @@ library(googleway)
 
 # liste des communes de plus de 5000 hab
 con &lt;- dbConnect(PostgreSQL(), user= &quot;postgres&quot;, password=&quot;postgres&quot;, dbname=&quot;am&quot;, host = &quot;localhost&quot;,  port=5432)
+
 lst_ville &lt;- dbGetQuery(con,&quot;select insee_com, nom_com from geo.geofla_commune_2015 where population &gt; 5000;&quot;)
 
-# définition de la df de résultat
 result &lt;- data.frame(place_id = NULL, nom = NULL, adresse = NULL,
                      rating = NULL, lat = NULL, lng = NULL, tags = NULL, ville = NULL,
                      stringsAsFactors = F)
-
-# 1 requete google / ville et append des résultats dans la df
+compteur &lt;- 0
 for (i in lst_ville$nom_com) {
+  compteur &lt;- compteur + 1
   tryCatch({
-    gp &lt;- google_places(key = APIkey,search_string = paste0(&quot;rock climbing &quot;, i))
+    gp &lt;- google_places(key = APIkey,search_string = paste0(&quot;salle escalade bloc &quot;, i, &quot;, france&quot;),language = &quot;fr&quot;)
     temp &lt;- data.frame(place_id = gp$results$place_id,
                        nom = gp$results$name,
                        adresse = gp$results$formatted_address,
@@ -59,21 +59,21 @@ for (i in lst_ville$nom_com) {
                        stringsAsFactors = F)
     result &lt;- rbind(result, temp)
     }, error = function(e) {print(paste0(i,&quot; KO&quot;))})
+  print(paste(compteur,&quot;:&quot;,i))
 }
-# deduplication sur le place_id (id unique)
+
 result_dedup &lt;- result[!duplicated(result$place_id),]</code></pre>
-<p>Google a une forte tendance à renvoyer des résultats qui dépassent souvent largement le périmètre que l’on cherche (des faux positifs en quelque sorte). D’autant que dans notre cas, il n’y a pas de <a href="https://developers.google.com/places/web-service/supported_types"><strong>type</strong></a> correspondant aux salles d’escalade permettant de restreindre les résultats à cette catégorie.</p>
-<p>Résultat, parmi les places obtenues, on trouve bien nos salles d’escalade de blocs (Arkose, Block’Out,…) mais aussi des sites naturels de grimpe, des clubs, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!</p>
+<p>On obtient 648 enregistrements.</p>
 <pre class="r"><code>library(dplyr)
 library(kableExtra)
 
 result_dedup %&gt;% 
   sample_n(., size = 10, replace = TRUE) %&gt;%
-  kable(caption = &#39;echantillon de 20 places&#39;) %&gt;%
-  kable_styling(bootstrap_options = &quot;striped&quot;, font_size = 9)</code></pre>
-<table class="table table-striped" style="font-size: 9px; margin-left: auto; margin-right: auto;">
+  kable(caption = &#39;echantillon de 10 places&#39;) %&gt;%
+  kable_styling(bootstrap_options = &quot;striped&quot;, font_size = 8)</code></pre>
+<table class="table table-striped" style="font-size: 8px; margin-left: auto; margin-right: auto;">
 <caption style="font-size: initial !important;">
-<span id="tab:tableau1">Table 1: </span>echantillon de 20 places
+<span id="tab:tableau1">Table 1: </span>echantillon de 10 places
 </caption>
 <thead>
 <tr>
@@ -105,290 +105,292 @@ ville
 <tbody>
 <tr>
 <td style="text-align:left;">
-1169
+829
 </td>
 <td style="text-align:left;">
-ChIJu2j0DlejikcRQoymKSpXuZM
+ChIJ7cn6i_Do5UcRPU80Q9LGtng
 </td>
 <td style="text-align:left;">
-Combe Laval
+Beauvais : Nainville
 </td>
 <td style="text-align:left;">
-26190 Saint-Laurent-en-Royans, France
+D75, 91750 Champcueil, France
 </td>
 <td style="text-align:right;">
-45.01706
+48.50307
 </td>
 <td style="text-align:right;">
-5.339522
+2.4792127
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-TAIN-L’HERMITAGE
+DAMMARIE-LES-LYS
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-3022
+2435
 </td>
 <td style="text-align:left;">
-ChIJ39uUWNMWrRIRKFJ-SSmmkqw
+ChIJa_QWeoAZyRIRVRn0QrfdTzw
 </td>
 <td style="text-align:left;">
-Tourist Office of the Pays de Figeac
+Club Alpin du COUDON
 </td>
 <td style="text-align:left;">
-Hôtel de La Monnaie, Place Vival, 46100 Figeac, France
+152 Rue Léon Guérin, 83160 La Valette-du-Var, France
 </td>
 <td style="text-align:right;">
-44.60785
+43.13650
 </td>
 <td style="text-align:right;">
-2.032492
-</td>
-<td style="text-align:left;">
-travel_agency store point_of_interest establishment
-</td>
-<td style="text-align:left;">
-FIGEAC
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7949
-</td>
-<td style="text-align:left;">
-ChIJl968RBwvw0cRUhpzWzfni1U
-</td>
-<td style="text-align:left;">
-Mairie
-</td>
-<td style="text-align:left;">
-Rue du Christ, 59960 Neuville-en-Ferrain, France
-</td>
-<td style="text-align:right;">
-50.74748
-</td>
-<td style="text-align:right;">
-3.164429
+5.9838311
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-NEUVILLE-EN-FERRAIN
+LA CRAU
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-5877
+15444
 </td>
 <td style="text-align:left;">
-ChIJS5ZCKCo55kcRRM2Y4kC4ZbQ
+ChIJUy2YAwanrRIR38IZl7epjlg
 </td>
 <td style="text-align:left;">
-Survilliers - Fosses
+CLUB VILPY: randonnée, escalade, canyoning
 </td>
 <td style="text-align:left;">
-95470 Fosses, France
+19 Rue Mailhes, 12200 Villefranche-de-Rouergue, France
 </td>
 <td style="text-align:right;">
-49.09958
+44.35258
 </td>
 <td style="text-align:right;">
-2.525629
-</td>
-<td style="text-align:left;">
-train_station transit_station point_of_interest establishment
-</td>
-<td style="text-align:left;">
-FOSSES
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-547
-</td>
-<td style="text-align:left;">
-ChIJWx27kxof4UcRquUbvDOQE14
-</td>
-<td style="text-align:left;">
-hippodrome saint aubin lès elbeuf
-</td>
-<td style="text-align:left;">
-72 Avenue Pasteur, 76410 Saint-Aubin-lès-Elbeuf, France
-</td>
-<td style="text-align:right;">
-49.30840
-</td>
-<td style="text-align:right;">
-1.018935
-</td>
-<td style="text-align:left;">
-gym health point_of_interest establishment
-</td>
-<td style="text-align:left;">
-SAINT-AUBIN-LES-ELBEUF
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-191
-</td>
-<td style="text-align:left;">
-ChIJ5YYaNyeXVA0RAyAuL04oNnU
-</td>
-<td style="text-align:left;">
-Le Teich Escalade
-</td>
-<td style="text-align:left;">
-Place Pierre Dubernet, 33470 Le Teich, France
-</td>
-<td style="text-align:right;">
-44.63453
-</td>
-<td style="text-align:right;">
--1.021714
+2.0317771
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-ARCACHON
+VILLEFRANCHE-DE-ROUERGUE
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-8013
+1900
 </td>
 <td style="text-align:left;">
-ChIJE4j_BWeUVA0RnR4L1lpYKFI
+ChIJURTtecMb90cR_EqwbPHnDx8
 </td>
 <td style="text-align:left;">
-L’Orange Bleue
+Groupe Alpiniste Gaulois
 </td>
 <td style="text-align:left;">
-64 Impasse Nicolas Appert, 33380 Biganos, France
+22Ter Impasse Bonnabaud, 63000 Clermont-Ferrand, France
 </td>
 <td style="text-align:right;">
-44.63745
+45.77529
 </td>
 <td style="text-align:right;">
--0.952713
-</td>
-<td style="text-align:left;">
-gym health point_of_interest establishment
-</td>
-<td style="text-align:left;">
-BIGANOS
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-197
-</td>
-<td style="text-align:left;">
-ChIJMazU3g_15kcRVZd-xmJB6No
-</td>
-<td style="text-align:left;">
-GRIMPO
-</td>
-<td style="text-align:left;">
-40 Rue des Patis, 95300 Pontoise, France
-</td>
-<td style="text-align:right;">
-49.05309
-</td>
-<td style="text-align:right;">
-2.080420
+3.0787026
 </td>
 <td style="text-align:left;">
 point_of_interest establishment
 </td>
 <td style="text-align:left;">
-CARRIERES-SOUS-POISSY
+CEYRAT
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-2207
+12895
 </td>
 <td style="text-align:left;">
-ChIJkQOG9Sdv5kcRTcbedxS19O0
+ChIJT812hfGZ_UcRjwiP4kgmxgg
 </td>
 <td style="text-align:left;">
-Fitness Park
+Salle des fêtes
 </td>
 <td style="text-align:left;">
-Centre commercial Qwartz, 4 Boulevard Gallieni, 92390 Villeneuve-la-Garenne, France
+5 Rue Alphonse Plault, 86170 Neuville-de-Poitou, France
 </td>
 <td style="text-align:right;">
-48.92542
+46.68458
 </td>
 <td style="text-align:right;">
-2.327303
+0.2459579
 </td>
 <td style="text-align:left;">
-gym health point_of_interest establishment
+point_of_interest establishment
 </td>
 <td style="text-align:left;">
-VILLENEUVE-LA-GARENNE
+NEUVILLE-DE-POITOU
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-5131
+10179
 </td>
 <td style="text-align:left;">
-ChIJn6IP1AxWkkcRL15cACKQXEU
+ChIJrR__ySniE0gRxo9LiSWhtcA
 </td>
 <td style="text-align:left;">
-Mayor of Luxeuil-les-Bains
+Salle Omnisports
 </td>
 <td style="text-align:left;">
-1 Place Saint-Pierre, 70300 Luxeuil-les-Bains, France
+46 Rue des Carmes, 29250 Saint-Pol-de-Léon, France
 </td>
 <td style="text-align:right;">
-47.81679
+48.68258
 </td>
 <td style="text-align:right;">
-6.380608
+-3.9940911
 </td>
 <td style="text-align:left;">
-city_hall local_government_office point_of_interest establishment
+point_of_interest establishment
 </td>
 <td style="text-align:left;">
-LUXEUIL-LES-BAINS
+SAINT-POL-DE-LEON
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10400
+</td>
+<td style="text-align:left;">
+ChIJq2zqdBRJtRIRHS_Tzykphm8
+</td>
+<td style="text-align:left;">
+Salle des fêtes
+</td>
+<td style="text-align:left;">
+7 Rue René Cassin, 07800 La Voulte-sur-Rhône, France
+</td>
+<td style="text-align:right;">
+44.80316
+</td>
+<td style="text-align:right;">
+4.7848268
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+LA VOULTE-SUR-RHONE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12109
+</td>
+<td style="text-align:left;">
+ChIJsxft68LtwkcRXrexqrrufaQ
+</td>
+<td style="text-align:left;">
+VUC Escalade
+</td>
+<td style="text-align:left;">
+Gymnase des Tertiales, 204 Boulevard des Alliés, 59300 Valenciennes, France
+</td>
+<td style="text-align:right;">
+50.36602
+</td>
+<td style="text-align:right;">
+3.5260856
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+VALENCIENNES
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13326
+</td>
+<td style="text-align:left;">
+ChIJ_Uq3Awku_kcR96iFbq9l96I
+</td>
+<td style="text-align:left;">
+Salle de la Combe Salle des Fêtes de Saint-Yriex
+</td>
+<td style="text-align:left;">
+152 Rue Jean et Constant Priolaud, 16710 Saint-Yrieix-sur-Charente, France
+</td>
+<td style="text-align:right;">
+45.67820
+</td>
+<td style="text-align:right;">
+0.1428186
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+SAINT-YRIEIX-SUR-CHARENTE
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1901
+</td>
+<td style="text-align:left;">
+ChIJEzch4XgZ90cR4AslvDjnL3w
+</td>
+<td style="text-align:left;">
+CUC escalade
+</td>
+<td style="text-align:left;">
+Gymnase Robert Pras, 3 Rue Jean Monnet, 63100 Clermont-Ferrand, France
+</td>
+<td style="text-align:right;">
+45.79300
+</td>
+<td style="text-align:right;">
+3.0676815
+</td>
+<td style="text-align:left;">
+point_of_interest establishment
+</td>
+<td style="text-align:left;">
+CEYRAT
 </td>
 </tr>
 </tbody>
 </table>
-<p>On commence par filtrer sur les types</p>
+<p>Cependant, Google a une forte tendance à renvoyer des résultats qui dépassent un peu le périmètre (des faux positifs en quelque sorte). D’autant que dans notre cas, il n’y a pas de <a href="https://developers.google.com/places/web-service/supported_types"><strong>type</strong></a> correspondant aux salles d’escalade permettant de restreindre les résultats à cette catégorie.</p>
+<p>Résultat, parmi les <em>places</em> obtenues, on retrouve bien nos salles d’escalade de blocs (Arkose, Block’Out,…) mais aussi des sites naturels de grimpe, des associations, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!</p>
+<p>On commence par filtrer sur les <em>types</em></p>
 <pre class="r"><code>library(stringr)
+library(tibble)
 # on tockenize les types dans un df
 lst_type &lt;- tibble(type = unlist(str_split(paste(result_dedup$types,collapse=&quot; &quot;),&quot; &quot;))) %&gt;% 
             group_by(type) %&gt;%
             summarise(n = n())
 lst_type  
-   # A tibble: 67 x 2
+   # A tibble: 28 x 2
       type               n
       &lt;chr&gt;          &lt;int&gt;
-    1 accounting         1
-    2 airport            1
-    3 amusement_park    17
-    4 art_gallery        2
-    5 bakery             1
-    6 bank               2
-    7 bar               45
-    8 beauty_salon       6
-    9 bicycle_store      1
-   10 bowling_alley      3
-   # ... with 57 more rows</code></pre>
+    1 amusement_park     4
+    2 bar               22
+    3 bicycle_store      1
+    4 bowling_alley      1
+    5 campground        12
+    6 casino             1
+    7 church             1
+    8 city_hall          2
+    9 clothing_store     2
+   10 doctor             1
+   # ... with 18 more rows</code></pre>
 <p>On construit (à la main) la liste de tous les types qui clairement n’ont rien à voir de près ou de loin avec une salle d’escalade et on supprime de la liste des <em>places</em> tout celles qui contiennent au moins un de ces types.</p>
-<pre class="r"><code>
-result_dedup_type_ok &lt;- result_dedup[!str_detect(result_dedup$types, &quot;zoo|university|travel_agency|transit_station|train_station|supermarket|stadium|shoe_store|school|rv_park|real_estate_agency|premise|political|place_of_worship|physiotherapist|parking|park|night_club|natural_feature|museum|movie_theater|meal_takeaway|meal_delivery|lodging|locality|local_government_office|insurance_agency|hospital|home_goods_store|hair_care|grocery_or_supermarket|general_contractor|gas_station|furniture_store|funeral_home|florist|finance|electronics_store|doctor|clothing_store|city_hall|church|cemetery|casino|car_repair|car_rental|car_dealer|campground|bowling_alley|bicycle_store|beauty_salon|bank|bakery|art_gallery|amusement_park|airport|accounting&quot;),]</code></pre>
+<pre class="r"><code>result_dedup_type_ok &lt;- result_dedup[!str_detect(result_dedup$types, &quot;zoo|university|travel_agency|transit_station|train_station|supermarket|stadium|shoe_store|school|rv_park|real_estate_agency|premise|political|place_of_worship|physiotherapist|parking|park|night_club|natural_feature|museum|movie_theater|meal_takeaway|meal_delivery|lodging|locality|local_government_office|insurance_agency|hospital|home_goods_store|hair_care|grocery_or_supermarket|general_contractor|gas_station|furniture_store|funeral_home|florist|finance|electronics_store|doctor|clothing_store|city_hall|church|cemetery|casino|car_repair|car_rental|car_dealer|campground|bowling_alley|bicycle_store|beauty_salon|bank|bakery|art_gallery|amusement_park|airport|accounting&quot;),]</code></pre>
 </div>
 </div>
 <div class="footnotes">

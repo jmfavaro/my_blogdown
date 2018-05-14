@@ -14,7 +14,7 @@ output:
 knitr::opts_chunk$set(collapse = TRUE, echo=TRUE, eval=TRUE, warning=FALSE, message=FALSE, comment="  ")
 options(knitr.table.format = "html")
 
-result_dedup <- readRDS("../../static/data/result_dedup.RDS")
+result_dedup <- readRDS("../../static/data/result_dedup_2.RDS")
 
 ```
 
@@ -48,17 +48,17 @@ library(googleway)
 
 # liste des communes de plus de 5000 hab
 con <- dbConnect(PostgreSQL(), user= "postgres", password="postgres", dbname="am", host = "localhost",  port=5432)
+
 lst_ville <- dbGetQuery(con,"select insee_com, nom_com from geo.geofla_commune_2015 where population > 5000;")
 
-# définition de la df de résultat
 result <- data.frame(place_id = NULL, nom = NULL, adresse = NULL,
                      rating = NULL, lat = NULL, lng = NULL, tags = NULL, ville = NULL,
                      stringsAsFactors = F)
-
-# 1 requete google / ville et append des résultats dans la df
+compteur <- 0
 for (i in lst_ville$nom_com) {
+  compteur <- compteur + 1
   tryCatch({
-    gp <- google_places(key = APIkey,search_string = paste0("rock climbing ", i))
+    gp <- google_places(key = APIkey,search_string = paste0("salle escalade bloc ", i, ", france"),language = "fr")
     temp <- data.frame(place_id = gp$results$place_id,
                        nom = gp$results$name,
                        adresse = gp$results$formatted_address,
@@ -69,15 +69,13 @@ for (i in lst_ville$nom_com) {
                        stringsAsFactors = F)
     result <- rbind(result, temp)
     }, error = function(e) {print(paste0(i," KO"))})
+  print(paste(compteur,":",i))
 }
-# deduplication sur le place_id (id unique)
+
 result_dedup <- result[!duplicated(result$place_id),]
 ```
 
-
-Google a une forte tendance à renvoyer des résultats qui dépassent souvent largement le périmètre que l'on cherche (des faux positifs en quelque sorte). D'autant que dans notre cas, il n'y a pas de [**type**](https://developers.google.com/places/web-service/supported_types)  correspondant aux salles d'escalade permettant de restreindre les résultats à cette catégorie.
-
-Résultat, parmi les  places obtenues, on trouve bien nos salles d'escalade de blocs (Arkose, Block'Out,...) mais aussi des sites naturels de grimpe, des clubs, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!
+On obtient `r nrow(result_dedup)` enregistrements. 
 
 ```{r tableau1, warning=FALSE, message=FALSE, echo=TRUE}
 library(dplyr)
@@ -85,29 +83,39 @@ library(kableExtra)
 
 result_dedup %>% 
   sample_n(., size = 10, replace = TRUE) %>%
-  kable(caption = 'echantillon de 20 places') %>%
-  kable_styling(bootstrap_options = "striped", font_size = 9)
+  kable(caption = 'echantillon de 10 places') %>%
+  kable_styling(bootstrap_options = "striped", font_size = 8)
 
 ```
 
-On commence par filtrer sur les types
+
+Cependant, Google a une forte tendance à renvoyer des résultats qui dépassent un peu le périmètre (des faux positifs en quelque sorte). D'autant que dans notre cas, il n'y a pas de [**type**](https://developers.google.com/places/web-service/supported_types)  correspondant aux salles d'escalade permettant de restreindre les résultats à cette catégorie.
+
+Résultat, parmi les  *places* obtenues, on retrouve bien nos salles d'escalade de blocs (Arkose, Block'Out,...) mais aussi des sites naturels de grimpe, des associations, des salles de gym, des restaurants, des campings, etc. Bref, il va falloir faire le ménage!
+
+On commence par filtrer sur les *types*
 ```{r, warning=FALSE, message=FALSE, echo=TRUE}
 library(stringr)
+library(tibble)
 # on tockenize les types dans un df
 lst_type <- tibble(type = unlist(str_split(paste(result_dedup$types,collapse=" ")," "))) %>% 
             group_by(type) %>%
             summarise(n = n())
-lst_type  
+head(lst_type)  
 ```
 
 
 On construit (à la main) la liste de tous les types qui clairement n'ont rien à voir de près ou de loin avec une salle d'escalade et on supprime de la liste des *places* tout celles qui contiennent au moins un de ces types.
 
 ```{r, warning=FALSE, message=FALSE, echo=TRUE}
-
-result_dedup_type_ok <- result_dedup[!str_detect(result_dedup$types, "zoo|university|travel_agency|transit_station|train_station|supermarket|stadium|shoe_store|school|rv_park|real_estate_agency|premise|political|place_of_worship|physiotherapist|parking|park|night_club|natural_feature|museum|movie_theater|meal_takeaway|meal_delivery|lodging|locality|local_government_office|insurance_agency|hospital|home_goods_store|hair_care|grocery_or_supermarket|general_contractor|gas_station|furniture_store|funeral_home|florist|finance|electronics_store|doctor|clothing_store|city_hall|church|cemetery|casino|car_repair|car_rental|car_dealer|campground|bowling_alley|bicycle_store|beauty_salon|bank|bakery|art_gallery|amusement_park|airport|accounting"),]
+result_dedup_typeok <- result_dedup[!str_detect(result_dedup$types, "bicycle_store|bowling_alley|campground|casino|church|city_hall|clothing_store|doctor|electronics_store|home_goods_store|local_government_office|lodging|place_of_worship|school|stadium|store|travel_agency|university"),]
 
 ```
 
+Après ce premier filtre, il reste `r nrow(result_dedupok)`. Néanmoins, on trouve encore des POI qui ne correspondent pas à ce que l'on cherche: des clubs, associations.  
 
+```{r, warning=FALSE, message=FALSE, echo=TRUE}
+result_dedup_typeok_nomok <- result_dedup_typeok[!str_detect(tolower(result_dedup_typeok$nom), "auberge|asso|caf|ffme|amicale|amitié|athletic|aviron|club alpin francais|asptt|centre|club|complexe|canyoning|dojo|falaise|football|golf|grimpeur|groupe|gymnase|halle|orange bleue|muscles|mur d'escalade|Nautique|physic|plongee|restaurant|sportif|rafting|rocher|site d'escalade|tennis"),]
+
+```
 

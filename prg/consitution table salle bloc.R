@@ -14,10 +14,11 @@ lst_ville <- dbGetQuery(con,"select insee_com, nom_com from geo.geofla_commune_2
 result <- data.frame(place_id = NULL, nom = NULL, adresse = NULL,
                      rating = NULL, lat = NULL, lng = NULL, tags = NULL, ville = NULL,
                      stringsAsFactors = F)
-
+compteur <- 0
 for (i in lst_ville$nom_com) {
+  compteur <- compteur + 1
   tryCatch({
-    gp <- google_places(key = APIkey,search_string = paste0("rock climbing ", i))
+    gp <- google_places(key = APIkey,search_string = paste0("salle escalade bloc ", i, ", france"),language = "fr")
     temp <- data.frame(place_id = gp$results$place_id,
                        nom = gp$results$name,
                        adresse = gp$results$formatted_address,
@@ -27,13 +28,14 @@ for (i in lst_ville$nom_com) {
                        ville = i,
                        stringsAsFactors = F)
     result <- rbind(result, temp)
-    }, error = function(e) {print(paste0(i," KO"))}, finally = print(i))
+    }, error = function(e) {print(paste0(i," KO"))})
+  print(paste(compteur,":",i))
 }
 
 result_dedup <- result[!duplicated(result$place_id),]
 
-head(result.dedup)
+result_dedup <- readRDS("./static/data/result_dedup_2.RDS")
 
-saveRDS(result.dedup,"./static/data/result_dedup.RDS")
+saveRDS(result_dedup_2,"./static/data/result_dedup_2.RDS")
 
 
